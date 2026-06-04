@@ -11,6 +11,8 @@ UI built in **Compose Multiplatform**. Base package: `com.rokapps.bankapp`.
   - `commonMain/` — code common to all targets (default home for new code)
   - `androidMain/`, `iosMain/` — platform-specific `actual` implementations only
   - `commonTest/`, `androidHostTest/`, `iosTest/` — tests
+- `ui/` — shared design-system module: the app's only UI building blocks
+  (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …), thin wrappers over Compose primitives
 - `androidApp/` — thin Android entry point (`MainActivity`)
 - `iosApp/` — thin iOS entry point (SwiftUI host + Xcode project)
 - `gradle/libs.versions.toml` — version catalog (single source of truth for dependencies)
@@ -36,6 +38,10 @@ Keep layers in their own packages (e.g. `feature/<name>/{ui,domain,data}`). Depe
    as `libs.*`. Never hardcode a version or coordinate string in a `build.gradle.kts`.
 4. **Tests required.** New shared logic (use cases, repositories, utilities) must have `commonTest`
    coverage. Run tests before considering a change done.
+5. **UI components from `ui` only.** Build all screens with the wrappers from the `ui` module
+   (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …). Do **not** call Compose
+   Material3/Foundation widgets (`Button`, `Text`, `TextField`, `Image`, …) directly in feature code.
+   If a new primitive is needed, add a wrapper to the `ui` module first, then use it.
 
 ## Commands
 
