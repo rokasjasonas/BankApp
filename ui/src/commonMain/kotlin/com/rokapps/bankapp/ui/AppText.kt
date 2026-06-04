@@ -11,10 +11,13 @@ import androidx.compose.ui.text.style.TextOverflow
 
 /**
  * The app's text primitive. Wraps Material3 [Text] so all typography flows through one place.
+ *
+ * @param testId stable id published as an accessibility description in debug builds.
  */
 @Composable
 fun AppText(
     text: String,
+    testId: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     style: TextStyle = LocalTextStyle.current,
@@ -24,7 +27,7 @@ fun AppText(
 ) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.testId(testId),
         color = color,
         style = style,
         textAlign = textAlign,

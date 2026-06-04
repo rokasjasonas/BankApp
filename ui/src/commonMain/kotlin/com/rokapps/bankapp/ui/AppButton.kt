@@ -7,17 +7,20 @@ import androidx.compose.ui.Modifier
 
 /**
  * The app's primary button. Wraps Material3 [Button] with a text label.
+ *
+ * @param testId stable id published as an accessibility description in debug builds.
  */
 @Composable
 fun AppButton(
     text: String,
     onClick: () -> Unit,
+    testId: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.testId(testId),
         enabled = enabled,
     ) {
         Text(text)

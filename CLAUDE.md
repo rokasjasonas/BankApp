@@ -12,7 +12,8 @@ UI built in **Compose Multiplatform**. Base package: `com.rokapps.bankapp`.
   - `androidMain/`, `iosMain/` — platform-specific `actual` implementations only
   - `commonTest/`, `androidHostTest/`, `iosTest/` — tests
 - `ui/` — shared design-system module: the app's only UI building blocks
-  (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …), thin wrappers over Compose primitives
+  (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …), thin wrappers over Compose
+  primitives. Each takes a required `testId`; `UiDebug.exposeTestIds` gates whether ids are published
 - `androidApp/` — thin Android entry point (`MainActivity`)
 - `iosApp/` — thin iOS entry point (SwiftUI host + Xcode project)
 - `gradle/libs.versions.toml` — version catalog (single source of truth for dependencies)
@@ -42,6 +43,11 @@ Keep layers in their own packages (e.g. `feature/<name>/{ui,domain,data}`). Depe
    (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …). Do **not** call Compose
    Material3/Foundation widgets (`Button`, `Text`, `TextField`, `Image`, …) directly in feature code.
    If a new primitive is needed, add a wrapper to the `ui` module first, then use it.
+6. **Test ids on every component.** Every `ui` component requires a `testId`. Each feature declares
+   all of its ids in a single `<Feature>TestIds` object in the feature's root package (e.g.
+   `feature/login/LoginTestIds.kt`); screens reference those constants, never raw string literals.
+   Test ids are published as accessibility content descriptions **in debug builds only** (gated by
+   `UiDebug.exposeTestIds`); release builds add no extra semantics.
 
 ## Commands
 

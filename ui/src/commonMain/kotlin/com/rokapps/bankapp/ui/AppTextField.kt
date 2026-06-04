@@ -9,11 +9,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 /**
  * The app's text input ("edit text"). Wraps Material3 [OutlinedTextField].
+ *
+ * @param testId stable id published as an accessibility description in debug builds.
  */
 @Composable
 fun AppTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    testId: String,
     modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String? = null,
@@ -26,7 +29,7 @@ fun AppTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier,
+        modifier = modifier.testId(testId),
         label = label?.let { { Text(it) } },
         placeholder = placeholder?.let { { Text(it) } },
         enabled = enabled,
