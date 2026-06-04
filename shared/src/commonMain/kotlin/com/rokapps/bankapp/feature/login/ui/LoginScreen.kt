@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.rokapps.bankapp.feature.login.LoginTestIds
 import com.rokapps.bankapp.ui.AppButton
 import com.rokapps.bankapp.ui.AppText
 import com.rokapps.bankapp.ui.AppTextField
@@ -40,14 +41,15 @@ fun LoginScreen(
             modifier = Modifier.widthIn(max = 420.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AppText("BankApp", style = MaterialTheme.typography.headlineMedium)
+            AppText("BankApp", testId = LoginTestIds.Title, style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(4.dp))
-            AppText("Sign in to continue", style = MaterialTheme.typography.bodyMedium)
+            AppText("Sign in to continue", testId = LoginTestIds.Subtitle, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(24.dp))
 
             AppTextField(
                 value = state.username,
                 onValueChange = viewModel::onUsernameChange,
+                testId = LoginTestIds.UsernameField,
                 label = "Username",
                 enabled = !state.isLoading,
                 modifier = Modifier.fillMaxWidth(),
@@ -56,6 +58,7 @@ fun LoginScreen(
             AppTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
+                testId = LoginTestIds.PasswordField,
                 label = "Password",
                 enabled = !state.isLoading,
                 visualTransformation = PasswordVisualTransformation(),
@@ -64,18 +67,19 @@ fun LoginScreen(
 
             if (state.error != null) {
                 Spacer(Modifier.height(12.dp))
-                AppText(state.error!!, color = MaterialTheme.colorScheme.error)
+                AppText(state.error!!, testId = LoginTestIds.Error, color = MaterialTheme.colorScheme.error)
             }
 
             Spacer(Modifier.height(24.dp))
             AppButton(
                 text = if (state.isLoading) "Signing in…" else "Sign in",
                 onClick = { viewModel.login(onLoggedIn) },
+                testId = LoginTestIds.SubmitButton,
                 enabled = state.canSubmit,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(16.dp))
-            AppText("Demo: demo / password", style = MaterialTheme.typography.bodySmall)
+            AppText("Demo: demo / password", testId = LoginTestIds.DemoHint, style = MaterialTheme.typography.bodySmall)
         }
     }
 }
