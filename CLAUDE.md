@@ -48,6 +48,10 @@ Keep layers in their own packages (e.g. `feature/<name>/{ui,domain,data}`). Depe
    `feature/login/LoginTestIds.kt`); screens reference those constants, never raw string literals.
    Test ids are published as accessibility content descriptions **in debug builds only** (gated by
    `UiDebug.exposeTestIds`); release builds add no extra semantics.
+7. **Keep README tech specs current.** Whenever a change touches the tech stack — dependency or
+   tool versions (`gradle/libs.versions.toml`, Gradle wrapper, JDK), SDK levels, modules, or
+   architecture — update the **Tech specs** and related sections of [README.md](README.md) in the
+   same change so they always reflect the project's actual state.
 
 ## Commands
 
