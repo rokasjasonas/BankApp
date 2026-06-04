@@ -78,8 +78,10 @@ fun LoginScreen(
                 enabled = state.canSubmit,
                 modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(Modifier.height(16.dp))
-            AppText("Demo: demo / password", testId = LoginTestIds.DemoHint, style = MaterialTheme.typography.bodySmall)
+            if (state.showDemoHint) {
+                Spacer(Modifier.height(16.dp))
+                AppText("Demo: demo / password", testId = LoginTestIds.DemoHint, style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
 }

@@ -55,14 +55,16 @@ fun AccountsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                state.accounts.forEach { account -> AccountRow(account) }
+                state.accounts.forEach { account ->
+                    AccountRow(account, showBalance = state.showBalance)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AccountRow(account: BankAccount) {
+private fun AccountRow(account: BankAccount, showBalance: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,11 +84,13 @@ private fun AccountRow(account: BankAccount) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(Modifier.height(8.dp))
-        AppText(
-            account.formattedBalance(),
-            testId = AccountsTestIds.accountBalance(account.id),
-            style = MaterialTheme.typography.titleLarge,
-        )
+        if (showBalance) {
+            Spacer(Modifier.height(8.dp))
+            AppText(
+                account.formattedBalance(),
+                testId = AccountsTestIds.accountBalance(account.id),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
     }
 }

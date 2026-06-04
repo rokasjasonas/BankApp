@@ -63,6 +63,14 @@ API requires it. See [CLAUDE.md](CLAUDE.md) for the full conventions.
 - **Login** — `feature/login`: validates credentials against a (fake) auth backend. Demo account: `demo` / `password`.
 - **Accounts (home)** — `feature/accounts`: lists the user's bank accounts with formatted balances.
 
+## Feature flags
+
+`core/featureflags` provides a small, reactive feature-flag mechanism: flags are declared in the
+`FeatureFlag` enum (key + default), fetched from a `RemoteFeatureFlagSource`, and exposed by
+`FeatureFlagRepository` as observable values. The source is currently a **fake remote**
+(`FakeRemoteFeatureFlagSource`) — swap it for a real backend later without touching callers. The
+repository is a singleton wired in `di/AppGraph` and refreshed once on startup.
+
 ## Running the apps
 
 Use the run configurations in your IDE's run widget, or:
