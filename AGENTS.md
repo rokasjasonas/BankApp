@@ -73,6 +73,18 @@ iOS app: open `iosApp/` in Xcode and run from there.
 
 ## Git workflow
 
-- **Never commit to `main` directly.** Create a branch for every change.
-- Open a PR with `gh pr create` for review; don't push straight to `main`.
-- Commit only when the work is complete and tests pass.
+- **One worktree + branch per task.** For *any* work, create a fresh git worktree on a new branch
+  off the latest `main` — never edit files in the primary checkout, and never commit to `main`.
+  Place worktrees under `.worktrees/<name>` (kept out of git via `.git/info/exclude`):
+
+  ```bash
+  git fetch origin
+  git worktree add -b <type>/<short-name> .worktrees/<short-name> origin/main
+  ```
+- **Branch names** are `<type>/<short-name>`, where `<type>` is one of `feat`, `fix`, `docs`,
+  `chore`, `refactor`, `test`.
+- **One PR per worktree.** Open a PR with `gh pr create` for review; don't push straight to `main`.
+- **Commit only when the work is complete and tests pass.** Keep each worktree/PR scoped to a single
+  task — don't pile unrelated changes onto an existing branch.
+- **Clean up after merge.** Remove the worktree with `git worktree remove .worktrees/<name>`; the
+  remote branch auto-deletes on merge.
