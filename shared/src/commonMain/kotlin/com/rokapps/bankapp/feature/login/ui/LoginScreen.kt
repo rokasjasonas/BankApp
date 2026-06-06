@@ -21,13 +21,14 @@ import com.rokapps.bankapp.feature.login.LoginTestIds
 import com.rokapps.bankapp.ui.AppButton
 import com.rokapps.bankapp.ui.AppText
 import com.rokapps.bankapp.ui.AppTextField
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel,
     onLoggedIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: LoginViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     Column(
         modifier = modifier
