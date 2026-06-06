@@ -24,13 +24,14 @@ import com.rokapps.bankapp.feature.accounts.domain.BankAccount
 import com.rokapps.bankapp.feature.accounts.domain.formattedBalance
 import com.rokapps.bankapp.ui.AppButton
 import com.rokapps.bankapp.ui.AppText
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AccountsScreen(
-    viewModel: AccountsViewModel,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: AccountsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     Column(
         modifier = modifier

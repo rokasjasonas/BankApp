@@ -38,6 +38,7 @@ A Kotlin Multiplatform banking app with a shared Compose Multiplatform UI, targe
 | AndroidX Lifecycle (viewmodel-compose, runtime-compose) | `2.11.0-beta01` |
 | AndroidX Activity Compose | `1.13.0` |
 | kotlinx-coroutines (core, test) | `1.10.2` |
+| Koin (core, compose, compose-viewmodel) | `4.1.1` |
 | kotlin-test | bundled with Kotlin |
 
 ## Architecture
@@ -69,7 +70,15 @@ API requires it. See [CLAUDE.md](CLAUDE.md) for the full conventions.
 `FeatureFlag` enum (key + default), fetched from a `RemoteFeatureFlagSource`, and exposed by
 `FeatureFlagRepository` as observable values. The source is currently a **fake remote**
 (`FakeRemoteFeatureFlagSource`) — swap it for a real backend later without touching callers. The
-repository is a singleton wired in `di/AppGraph` and refreshed once on startup.
+repository is refreshed once on startup.
+
+## Dependency injection
+
+Dependencies are wired with **Koin** (`4.1.1`) — the modules are defined in `di/AppGraph` and
+started via `KoinApplication` at the app root. ViewModels use `koinViewModel()` from
+`koin-compose-viewmodel` and are scoped per-screen. Use cases and repositories are registered as
+`factory` / `single` respectively so that stateful dependencies (repositories, sources) are shared
+and stateless ones (use cases) are created fresh on each injection.
 
 ## Running the apps
 
