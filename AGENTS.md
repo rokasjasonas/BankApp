@@ -1,0 +1,78 @@
+# AGENTS.md
+
+Guidance for AI coding agents working in this repository.
+
+> **Canonical instructions file.** This is the single source of truth for every agent (Claude,
+> Gemini, Qwen, Codex, Cursor, OpenCode, …). Tool-specific files — `CLAUDE.md`, `GEMINI.md`,
+> `QWEN.md` — are thin pointers to this file. **Edit `AGENTS.md` only**; never let the pointers
+> diverge.
+
+## Project
+
+BankApp is a Kotlin Multiplatform (KMP) app targeting **Android** and **iOS**, with a shared
+UI built in **Compose Multiplatform**. Base package: `com.rokapps.bankapp`.
+
+- `shared/` — shared Kotlin code (the bulk of the app lives here)
+  - `commonMain/` — code common to all targets (default home for new code)
+  - `androidMain/`, `iosMain/` — platform-specific `actual` implementations only
+  - `commonTest/`, `androidHostTest/`, `iosTest/` — tests
+- `ui/` — shared design-system module: the app's only UI building blocks
+  (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …), thin wrappers over Compose
+  primitives. Each takes a required `testId`; `UiDebug.exposeTestIds` gates whether ids are published
+- `androidApp/` — thin Android entry point (`MainActivity`)
+- `iosApp/` — thin iOS entry point (SwiftUI host + Xcode project)
+- `gradle/libs.versions.toml` — version catalog (single source of truth for dependencies)
+
+## Architecture — MVVM + Clean
+
+Layer new features in `shared/commonMain`, keeping a one-way dependency: **UI → ViewModel → UseCase → Repository**.
+
+- **UI** (Compose) observes immutable state exposed by a ViewModel; no business logic in composables.
+- **ViewModel** holds UI state and calls use cases. Use `androidx.lifecycle` viewmodel (already in the catalog).
+- **UseCase** — one focused unit of business logic per use case.
+- **Repository** — data access behind an interface; implementations can use `expect`/`actual` for platform APIs.
+
+Keep layers in their own packages (e.g. `feature/<name>/{ui,domain,data}`). Depend on interfaces, not implementations.
+
+## Hard rules
+
+1. **Shared-first.** Put code in `commonMain` by default. Only drop to `androidMain`/`iosMain` via
+   `expect`/`actual` when a platform API genuinely requires it.
+2. **Compose UI in shared.** Build screens with Compose Multiplatform in `shared/commonMain`. Keep
+   `androidApp` and `iosApp` as thin entry points only.
+3. **Version catalog only.** Add/upgrade dependencies in `gradle/libs.versions.toml` and reference them
+   as `libs.*`. Never hardcode a version or coordinate string in a `build.gradle.kts`.
+4. **Tests required.** New shared logic (use cases, repositories, utilities) must have `commonTest`
+   coverage. Run tests before considering a change done.
+5. **UI components from `ui` only.** Build all screens with the wrappers from the `ui` module
+   (`AppButton`, `AppText`, `AppTextField`, `AppImage`, `AppIcon`, …). Do **not** call Compose
+   Material3/Foundation widgets (`Button`, `Text`, `TextField`, `Image`, …) directly in feature code.
+   If a new primitive is needed, add a wrapper to the `ui` module first, then use it.
+6. **Test ids on every component.** Every `ui` component requires a `testId`. Each feature declares
+   all of its ids in a single `<Feature>TestIds` object in the feature's root package (e.g.
+   `feature/login/LoginTestIds.kt`); screens reference those constants, never raw string literals.
+   Test ids are published as accessibility content descriptions **in debug builds only** (gated by
+   `UiDebug.exposeTestIds`); release builds add no extra semantics.
+7. **Keep README tech specs current.** Whenever a change touches the tech stack — dependency or
+   tool versions (`gradle/libs.versions.toml`, Gradle wrapper, JDK), SDK levels, modules, or
+   architecture — update the **Tech specs** and related sections of [README.md](README.md) in the
+   same change so they always reflect the project's actual state.
+
+## Commands
+
+```bash
+# Build Android debug APK
+./gradlew :androidApp:assembleDebug
+
+# Run tests
+./gradlew :shared:testAndroidHostTest        # Android (JVM host) tests
+./gradlew :shared:iosSimulatorArm64Test      # iOS simulator tests
+```
+
+iOS app: open `iosApp/` in Xcode and run from there.
+
+## Git workflow
+
+- **Never commit to `main` directly.** Create a branch for every change.
+- Open a PR with `gh pr create` for review; don't push straight to `main`.
+- Commit only when the work is complete and tests pass.

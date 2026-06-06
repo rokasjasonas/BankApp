@@ -44,7 +44,7 @@ A Kotlin Multiplatform banking app with a shared Compose Multiplatform UI, targe
 
 **MVVM + Clean**, with a one-way dependency: **UI → ViewModel → UseCase → Repository**. Almost all
 code lives in `shared/commonMain`; platform code is added via `expect`/`actual` only when a platform
-API requires it. See [CLAUDE.md](CLAUDE.md) for the full conventions.
+API requires it. See [AGENTS.md](AGENTS.md) for the full conventions.
 
 ## Modules
 
