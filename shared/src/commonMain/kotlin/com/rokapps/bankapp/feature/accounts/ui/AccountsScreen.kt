@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rokapps.bankapp.feature.accounts.AccountsTestIds
 import com.rokapps.bankapp.feature.accounts.domain.BankAccount
-import com.rokapps.bankapp.feature.accounts.domain.formattedBalance
 import com.rokapps.bankapp.ui.AppButton
 import com.rokapps.bankapp.ui.AppText
 import org.koin.compose.viewmodel.koinViewModel
@@ -49,15 +48,15 @@ fun AccountsScreen(
         }
         Spacer(Modifier.height(20.dp))
 
-        when {
-            state.isLoading -> AppText("Loading…", testId = AccountsTestIds.Loading)
-            state.error != null -> AppText(state.error!!, testId = AccountsTestIds.Error, color = MaterialTheme.colorScheme.error)
-            else -> Column(
+        when (val s = state) {
+            is AccountsUiState.Loading -> AppText("Loading…", testId = AccountsTestIds.Loading)
+            is AccountsUiState.Error -> AppText(text = s.message, testId = AccountsTestIds.Error, color = MaterialTheme.colorScheme.error)
+            is AccountsUiState.Success -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                state.accounts.forEach { account ->
-                    AccountRow(account, showBalance = state.showBalance)
+                s.accounts.forEach { account ->
+                    AccountRow(account, showBalance = s.showBalance)
                 }
             }
         }
@@ -74,13 +73,13 @@ private fun AccountRow(account: BankAccount, showBalance: Boolean) {
             .padding(16.dp),
     ) {
         AppText(
-            account.name,
+            text = account.name,
             testId = AccountsTestIds.accountName(account.id),
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.height(4.dp))
         AppText(
-            account.accountNumber,
+            text = account.accountNumber,
             testId = AccountsTestIds.accountNumber(account.id),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -88,7 +87,7 @@ private fun AccountRow(account: BankAccount, showBalance: Boolean) {
         if (showBalance) {
             Spacer(Modifier.height(8.dp))
             AppText(
-                account.formattedBalance(),
+                text = account.formattedBalance(),
                 testId = AccountsTestIds.accountBalance(account.id),
                 style = MaterialTheme.typography.titleLarge,
             )

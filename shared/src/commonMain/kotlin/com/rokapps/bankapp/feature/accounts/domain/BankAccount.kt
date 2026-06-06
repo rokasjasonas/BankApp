@@ -11,10 +11,3 @@ data class BankAccount(
     val balanceMinor: Long,
     val currency: String,
 )
-
-/** Formats the balance as "major.minor CURRENCY", e.g. "1234.56 EUR". */
-fun BankAccount.formattedBalance(): String {
-    val major = balanceMinor / 100
-    val minor = (balanceMinor % 100).toString().padStart(2, '0')
-    return "$major.$minor $currency"
-}

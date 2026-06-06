@@ -9,39 +9,48 @@ import com.rokapps.bankapp.feature.accounts.domain.GetAccountsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class AccountsUiState(
-    val isLoading: Boolean = true,
-    val accounts: List<BankAccount> = emptyList(),
-    val error: String? = null,
-    val showBalance: Boolean = true,
-)
+sealed interface AccountsUiState {
+    data object Loading : AccountsUiState
+    data class Error(val message: String) : AccountsUiState
+    data class Success(
+        val accounts: List<BankAccount>,
+        val showBalance: Boolean,
+    ) : AccountsUiState
+}
 
 class AccountsViewModel(
     private val getAccounts: GetAccountsUseCase,
     observeFeatureFlag: ObserveFeatureFlagUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(AccountsUiState())
+    private val _state = MutableStateFlow<AccountsUiState>(AccountsUiState.Loading)
     val state: StateFlow<AccountsUiState> = _state.asStateFlow()
 
     init {
         load()
         viewModelScope.launch {
             observeFeatureFlag(FeatureFlag.ShowAccountBalance).collect { enabled ->
-                _state.update { it.copy(showBalance = enabled) }
+                val current = _state.value
+                if (current is AccountsUiState.Success) {
+                    _state.value = current.copy(showBalance = enabled)
+                }
             }
         }
     }
 
     fun load() {
-        _state.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
+            _state.value = AccountsUiState.Loading
             runCatching { getAccounts() }
-                .onSuccess { accounts -> _state.update { it.copy(isLoading = false, accounts = accounts) } }
-                .onFailure { e -> _state.update { it.copy(isLoading = false, error = e.message ?: "Failed to load accounts") } }
+                .onSuccess { accounts ->
+                    val showBalance = (_state.value as? AccountsUiState.Success)?.showBalance ?: true
+                    _state.value = AccountsUiState.Success(accounts = accounts, showBalance = showBalance)
+                }
+                .onFailure { e ->
+                    _state.value = AccountsUiState.Error(e.message ?: "Failed to load accounts")
+                }
         }
     }
 }
