@@ -14,7 +14,6 @@ import com.rokapps.bankapp.feature.login.domain.AuthRepository
 import com.rokapps.bankapp.feature.login.domain.LoginUseCase
 import com.rokapps.bankapp.feature.login.ui.LoginViewModel
 import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
