@@ -18,7 +18,7 @@ A Kotlin Multiplatform banking app with a shared Compose Multiplatform UI, targe
 | Build system | Gradle `9.1.0` (wrapper) |
 | Android Gradle Plugin | `9.0.1` |
 | JDK toolchain | `21` (Amazon Corretto, via `gradle-daemon-jvm.properties`) |
-| Module JVM target | `11` |
+| Module JVM target | `21` |
 | Dependencies | Centralised in the [version catalog](gradle/libs.versions.toml) |
 | Config cache / build cache | Enabled |
 
