@@ -12,8 +12,11 @@ class LoginUseCaseTest {
 
     @Test
     fun blankCredentialsFailWithoutHittingRepository() = runTest {
-        assertTrue(useCase("", "").isFailure)
-        assertTrue(useCase("demo", "").isFailure)
+        listOf("" to "", "demo" to "").forEach { (username, password) ->
+            val result = useCase(username, password)
+            assertTrue(result.isFailure)
+            assertTrue(result.exceptionOrNull() is IllegalArgumentException)
+        }
     }
 
     @Test
@@ -24,6 +27,7 @@ class LoginUseCaseTest {
 
     @Test
     fun wrongPasswordFails() = runTest {
-        assertTrue(useCase(FakeAuthRepository.DEMO_USER, "wrong").isFailure)
+        val result = useCase(FakeAuthRepository.DEMO_USER, "wrong")
+        assertTrue(result.isFailure)
     }
 }

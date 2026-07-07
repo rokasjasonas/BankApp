@@ -24,6 +24,7 @@ fun App() {
 
         LaunchedEffect(Unit) {
             runCatching { featureFlagRepository.refresh() }
+                .onFailure { println("Failed to refresh feature flags: $it") }
         }
 
         MaterialTheme {
